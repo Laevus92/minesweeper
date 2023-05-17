@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Righteous", cursive;
-  src: url(/minesweeper/assets/fonts/Righteous-Regular.ttf);
+  src: url(../assets/fonts/Righteous-Regular.ttf);
 }
 * {
   box-sizing: border-box;
@@ -12,7 +12,7 @@
 body {
   height: 100vh;
   width: 100vw;
-  background-image: url(/minesweeper/assets/img/jpg/digital_styled_camo_pattern_design_1307.jpg);
+  background-image: url(../assets/img/jpg/digital_styled_camo_pattern_design_1307.jpg);
   background-size: cover;
   background-color: rgba(0, 0, 0, 0.4156862745);
   background-blend-mode: color;
@@ -69,7 +69,7 @@ body {
   }
 }
 .players-statistic__avatar {
-  background-image: url(/minesweeper/assets/img/png/soldier.png);
+  background-image: url(../assets/img/png/soldier.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 100%;
@@ -98,7 +98,7 @@ body {
   flex-direction: row;
 }
 .timer__icon {
-  background-image: url(/minesweeper/assets/img/png/chronometer.png);
+  background-image: url(../assets/img/png/chronometer.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 40px;
@@ -117,7 +117,7 @@ body {
   flex-direction: row;
 }
 .steps__icon {
-  background-image: url(/minesweeper/assets/img/png/step.png);
+  background-image: url(../assets/img/png/step.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 40px;
@@ -136,7 +136,7 @@ body {
   flex-direction: row;
 }
 .mines__icon {
-  background-image: url(/minesweeper/assets/img/png/red-flag.png);
+  background-image: url(../assets/img/png/red-flag.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 40px;
@@ -167,7 +167,7 @@ body {
   justify-content: space-around;
 }
 .control-panel__sound-button {
-  background-image: url(/minesweeper/assets/img/png/sound.png);
+  background-image: url(../assets/img/png/sound.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 60px;
@@ -179,7 +179,7 @@ body {
   transform: rotate3d(0, 1, 0, 180deg);
 }
 .control-panel__new-game-button {
-  background-image: url(/minesweeper/assets/img/png/reload.png);
+  background-image: url(../assets/img/png/reload.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 60px;
@@ -191,7 +191,7 @@ body {
   transform: rotate(360deg);
 }
 .control-panel__record-button {
-  background-image: url(/minesweeper/assets/img/png/trophy.png);
+  background-image: url(../assets/img/png/trophy.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 60px;
@@ -209,7 +209,7 @@ body {
   align-items: center;
 }
 .level__img {
-  background-image: url(/minesweeper/assets/img/png/hard.png);
+  background-image: url(../assets/img/png/hard.png);
   background-size: contain;
   background-repeat: no-repeat;
   width: 100px;
@@ -281,15 +281,15 @@ body {
 }
 
 .field {
-  background-image: url(/minesweeper/assets/img/jpg/grass.jpg);
+  background-image: url(../assets/img/jpg/grass.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   margin: auto;
-  -o-border-image: url(/minesweeper/assets/img/jpg/danger\ tape.jpg) 68/15px round;
-     border-image: url(/minesweeper/assets/img/jpg/danger\ tape.jpg) 68/15px round;
+  -o-border-image: url(../assets/img/jpg/danger\ tape.jpg) 68/15px round;
+     border-image: url(../assets/img/jpg/danger\ tape.jpg) 68/15px round;
   padding: 25px;
   max-width: 800px;
   max-height: 800px;
@@ -361,13 +361,13 @@ body {
   z-index: 0;
 }
 .field__cell_opened {
-  background-image: url(/minesweeper/assets/img/jpg/ground.jpg);
+  background-image: url(../assets/img/jpg/ground.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   border: 2px solid #47341e;
 }
 .field__cell_marked {
-  background-image: url(/minesweeper/assets/img/png/red-flag.png);
+  background-image: url(../assets/img/png/red-flag.png);
   background-size: cover;
   background-repeat: no-repeat;
 }
