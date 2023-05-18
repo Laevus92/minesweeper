@@ -1,4 +1,5 @@
 const DIFFICULT = { easy: [100, 10], normal: [225, 25], hard: [625, 99] };
+const result = [];
 function createInterface() {
   // create wrapper
   let wrapper = document.createElement('div');
@@ -120,9 +121,34 @@ function createInterface() {
   level.appendChild(okButton);
 }
 createInterface();
+const main = document.querySelector('.main');
 
+function createRecordTable() {
+  let records = document.createElement('div');
+  records.className = 'main__records';
+  main.appendChild(records);
+  records = document.querySelector('.main__records');
+  const recordsTitle = document.createElement('h3');
+  recordsTitle.classList = 'main__record-title';
+  recordsTitle.textContent = 'Records';
+  records.appendChild(recordsTitle);
+  let recordsTable = document.createElement('ul');
+  recordsTable.classList = 'main__records-table';
+  records.appendChild(recordsTable);
+  recordsTable = document.querySelector('.main__records-table');
+  const recordButton = document.createElement('button');
+  recordButton.classList = 'main__record-button';
+  recordButton.textContent = 'Close';
+  records.appendChild(recordButton);
+}
+
+createRecordTable();
+const recordsTable = document.querySelector('.main__records-table');
+const records = document.querySelector('.main__records');
+const recordButton = document.querySelector('.main__record-button');
 const stepsQuantity = document.querySelector('.steps__quanuty');
 const timeValue = document.querySelector('.timer__time-value');
+const statisticButton = document.querySelector('.control-panel__record-button');
 let stepCounter = 0;
 let timerId;
 let timeCounter = 0;
@@ -303,16 +329,58 @@ function playSound(sound, volume) {
   }
 }
 
+function saveResult(win) {
+  const currentResult = {};
+  if (result.length < 10) {
+    if (win) {
+      currentResult.result = 'WIN';
+    } else {
+      currentResult.result = 'LOOSE';
+    }
+    currentResult.time = `time: ${document.querySelector('.timer__time-value').textContent}`;
+    currentResult.steps = `steps: ${document.querySelector('.steps__quanuty').textContent}`;
+    result.push(currentResult);
+  } else {
+    result.shift();
+    if (win) {
+      currentResult.result = 'WIN';
+    } else {
+      currentResult.result = 'LOOSE';
+    }
+    currentResult.time = `time: ${document.querySelector('.timer__time-value').textContent}`;
+    currentResult.steps = `steps: ${document.querySelector('.steps__quanuty').textContent}`;
+    result.push(currentResult);
+  }
+  console.log(result);
+}
+function openRecordsTab() {
+  if (!records.classList.contains('main__records_active')) {
+    records.classList.add('main__records_active');
+    result.forEach((currentResult) => {
+      const li = document.createElement('li');
+      li.className = 'main__records-item';
+      li.textContent = `${result.indexOf(currentResult) + 1}. ${currentResult.result} (${currentResult.time} ${currentResult.steps})`;
+      recordsTable.appendChild(li);
+    });
+  } else {
+    const list = document.querySelectorAll('.main__records-item');
+    records.classList.remove('main__records_active');
+    list.forEach((element) => element.remove());
+  }
+}
+
 function createField(level = DIFFICULT.easy) {
   const [cellsQuantity, bombsQuantity] = level;
   const fieldWith = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
   const fieldHeight = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
   let field = document.createElement('div');
+  // create game field;
   field.className = 'field';
   field.style.width = `${fieldWith}vw`;
   field.style.height = `${fieldHeight}vw`;
   document.querySelector('main').appendChild(field);
   field = document.querySelector('.field');
+  // create results pop-up
   let resultTable = document.createElement('div');
   resultTable.className = 'field__result-table';
   field.appendChild(resultTable);
@@ -331,6 +399,7 @@ function createField(level = DIFFICULT.easy) {
   resultTable.appendChild(tableButton);
   tableButton = document.querySelector('.field__table-button');
   document.querySelector('.mines__quanuty').textContent = bombsQuantity;
+  // create field cells
   for (let i = 0; i < cellsQuantity; i += 1) {
     const randomCell = document.createElement('div');
     randomCell.className = 'field__cell';
@@ -379,6 +448,8 @@ function createField(level = DIFFICULT.easy) {
       clearInterval(isWinID);
       playSound(winSound, mute);
       showBombs();
+      const win = true;
+      saveResult(win);
     }
   }
   function markCell(cell) {
@@ -440,6 +511,7 @@ function createField(level = DIFFICULT.easy) {
       // ячейка выше
       if (stringNumber < Math.sqrt(cellsQuantity) - 1) {
         checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity)]);
+        // предыдущая ячейка
         if (columnNumber > 0) {
           checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity) - 1]);
         }
@@ -460,6 +532,8 @@ function createField(level = DIFFICULT.easy) {
       cellStyle.style.backgroundColor = '#47341e';
       showBombs();
       playSound(looseSound, mute);
+      const win = false;
+      saveResult(win);
     }
   }
   // init steps counter
@@ -564,3 +638,7 @@ muteButton.addEventListener('click', () => {
     muteButton.style.backgroundImage = 'url(./assets/img/png/sound.png)';
   }
 });
+
+statisticButton.addEventListener('click', openRecordsTab);
+
+recordButton.addEventListener('click', openRecordsTab);
