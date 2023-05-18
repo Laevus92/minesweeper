@@ -1,5 +1,11 @@
 const DIFFICULT = { easy: [100, 10], normal: [225, 25], hard: [625, 99] };
-const result = [];
+let result;
+if (localStorage.getItem('results')) {
+  result = JSON.parse(localStorage.getItem('results'));
+} else {
+  result = [];
+}
+
 function createInterface() {
   // create wrapper
   let wrapper = document.createElement('div');
@@ -642,3 +648,9 @@ muteButton.addEventListener('click', () => {
 statisticButton.addEventListener('click', openRecordsTab);
 
 recordButton.addEventListener('click', openRecordsTab);
+
+function setLocalStorage() {
+  localStorage.setItem('results', JSON.stringify(result));
+}
+
+window.addEventListener('beforeunload', setLocalStorage)
