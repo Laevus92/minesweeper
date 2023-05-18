@@ -128,12 +128,12 @@ let timerId;
 let timeCounter = 0;
 let timerRunning = false;
 let isWinID = '';
-const clickSound = new Audio('/assets/sounds/open_cell.mp3');
-const looseSound = new Audio('/assets/sounds/explosion.mp3');
-const winSound = new Audio('/assets/sounds/yahoo.mp3');
-const markSound = new Audio('/assets/sounds/hit.mp3');
-const unmarkSound = new Audio('/assets/sounds/unmark.mp3');
-const newGameSound = new Audio('/assets/sounds/new-game.mp3');
+const clickSound = new Audio('./assets/sounds/open_cell.mp3');
+const looseSound = new Audio('./assets/sounds/explosion.mp3');
+const winSound = new Audio('./assets/sounds/yahoo.mp3');
+const markSound = new Audio('./assets/sounds/hit.mp3');
+const unmarkSound = new Audio('./assets/sounds/unmark.mp3');
+const newGameSound = new Audio('./assets/sounds/new-game.mp3');
 let mute = false;
 
 function getRandomNumber(min, max) {
@@ -353,7 +353,7 @@ function createField(level = DIFFICULT.easy) {
       - (Math.sqrt(cellsQuantity) * allStringNumber);
 
       if (matrix[allStringNumber][allColumnNumber] === 'B') {
-        cellStyle.style.backgroundImage = 'url(/assets/img/png/bomb.png)';
+        cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
         cellStyle.style.backgroundColor = '#47341e';
       }
 
@@ -375,6 +375,7 @@ function createField(level = DIFFICULT.easy) {
       resultTable.classList.add('field__result-table_active');
       tableTitle.textContent = 'YOU WIN!';
       tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanuty').textContent}`;
+      document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/winner.png)';
       clearInterval(isWinID);
       playSound(winSound, mute);
       showBombs();
@@ -434,9 +435,9 @@ function createField(level = DIFFICULT.easy) {
       resultTable.classList.add('field__result-table_active');
       tableTitle.textContent = 'YOU LOOSE!';
       tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanuty').textContent}`;
-      document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(/assets/img/png/rip.png)';
+      document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/rip.png)';
       cell.classList.add('field__cell_opened');
-      cellStyle.style.backgroundImage = 'url(/assets/img/png/bomb.png)';
+      cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
       cellStyle.style.backgroundColor = '#47341e';
       showBombs();
       playSound(looseSound, mute);
@@ -521,12 +522,9 @@ function startNewGame() {
   stopTimer();
   stepCounter = 0;
   timeCounter = 0;
-  document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(/assets/img/png/soldier.png)';
+  document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/soldier.png)';
   timeValue.textContent = '00:00';
   stepsQuantity.textContent = '000';
-  // const field = document.querySelector('.field');
-  // const inputWidth = document.querySelector('.level__input-width');
-  // const inputMines = document.querySelector('.level__input-mines');
   const okButton = document.querySelector('.level__button');
   startNewCustomGame();
   okButton.addEventListener('click', startNewCustomGame);
@@ -541,9 +539,9 @@ const muteButton = document.querySelector('.control-panel__sound-button');
 muteButton.addEventListener('click', () => {
   if (mute === false) {
     mute = true;
-    muteButton.style.backgroundImage = 'url(/assets/img/png/no-sound.png)';
+    muteButton.style.backgroundImage = 'url(./assets/img/png/no-sound.png)';
   } else {
     mute = false;
-    muteButton.style.backgroundImage = 'url(/assets/img/png/sound.png)';
+    muteButton.style.backgroundImage = 'url(./assets/img/png/sound.png)';
   }
 });
