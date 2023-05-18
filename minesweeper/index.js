@@ -417,17 +417,36 @@ function createField(level = DIFFICULT.easy) {
     } else if (matrix[stringNumber][columnNumber] === 0 && !cell.classList.contains('field__cell_opened')
     && !cell.classList.contains('field__cell_marked')) {
       cell.classList.add('field__cell_opened');
+      // предыдущая ячейка
       if (columnNumber > 0) {
         checkCell(cells[Array.from(cells).indexOf(cell) - 1]);
       }
+      // следующая ячейка
       if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
         checkCell(cells[Array.from(cells).indexOf(cell) + 1]);
       }
+      // ячейка ниже
       if (stringNumber > 0) {
         checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity)]);
+        // предыдущая ячейка
+        if (columnNumber > 0) {
+          checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity) - 1]);
+        }
+        // следующая ячейка
+        if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
+          checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity) + 1]);
+        }
       }
+      // ячейка выше
       if (stringNumber < Math.sqrt(cellsQuantity) - 1) {
         checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity)]);
+        if (columnNumber > 0) {
+          checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity) - 1]);
+        }
+        // следующая ячейка
+        if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
+          checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity) + 1]);
+        }
       }
     } else if (matrix[stringNumber][columnNumber] === 'B' && !cell.classList.contains('field__cell_marked')) {
       stopTimer();
