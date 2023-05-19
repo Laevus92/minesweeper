@@ -177,7 +177,7 @@ let currentGame;
 let isContinue;
 
 if (localStorage.getItem('isContinue')) {
- isContinue = JSON.parse(localStorage.getItem('isContinue'))
+  isContinue = JSON.parse(localStorage.getItem('isContinue'));
 } else {
   isContinue = false;
 }
@@ -395,7 +395,7 @@ function openRecordsTab() {
 let flagsCount;
 function createField(level = DIFFICULT.easy) {
   isContinue = false;
-  currentGame = {}
+  currentGame = {};
   const [cellsQuantity, bombsQuantity] = level;
   const fieldWith = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
   const fieldHeight = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
@@ -563,7 +563,7 @@ function createField(level = DIFFICULT.easy) {
       const win = false;
       saveResult(win);
     }
-    isContinue = true
+    isContinue = true;
   }
   // init steps counter
   cells.forEach((cell) => {
