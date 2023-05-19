@@ -44,13 +44,26 @@
    font-size: 14px;
 }
 
+@mixin settings-button() {
+   background-size: contain;
+   background-repeat: no-repeat;
+   width: 50px;
+   height: 50px;
+   margin: 5px;
+   cursor: pointer;
+   transition: .6s ease-in-out;
+   &:hover {
+      transform: rotate(360deg);
+   }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   border: none;
 }
-body {
+.body {
   height: 100vh;
   width: 100vw;
   background-image: url(../img/jpg/digital_styled_camo_pattern_design_1307.jpg);
@@ -58,6 +71,9 @@ body {
   background-color: #0000006a;
   background-blend-mode: color;
   padding-top: 30px;
+  &_winter {
+   background-image: url(../img/jpg/6741853.jpg);
+  }
 }
 .wrapper {
   width: 100%;
@@ -122,6 +138,10 @@ body {
   border: 8px solid rgb(55 102 55);
   border-radius: 15px;
   overflow: hidden;
+  &_winter {
+   background-color: rgb(34 43 57 / 77%);
+   border: 8px solid rgb(61 91 135);
+  }
   @media (width < 815px) {
     flex-direction: row;
     flex-wrap: wrap;
@@ -236,6 +256,10 @@ body {
   border-radius: 15px;
   overflow: hidden;
   margin: 20px 0 0 0;
+  &_winter {
+   background-color: rgb(34 43 57 / 77%);
+   border: 8px solid rgb(61 91 135);
+  }
   @media (width < 815px) {
     margin: 0;
   }
@@ -253,46 +277,31 @@ body {
 
 		&__sound-button {
       background-image: url(../img/png/sound.png);
-      background-size: contain;
-      background-repeat: no-repeat;
-      width: 60px;
-      height: 60px;
-      cursor: pointer;
-      transition: .6s ease-in-out;
-      &:hover {
-         transform: rotate3d(0, 1, 0, 180deg);
-      }
+      @include settings-button()
 		}
 
 		// .control-panel__new-game-button
 
 		&__new-game-button {
       background-image: url(../img/png/reload.png);
-      background-size: contain;
-      background-repeat: no-repeat;
-      width: 60px;
-      height: 60px;
-      cursor: pointer;
-      transition: .6s ease-in-out;
-      &:hover {
-         transform: rotate(360deg);
-      }
+      @include settings-button()
 		}
 
 		// .control-panel__record-button
 
 		&__record-button {
       background-image: url(../img/png/trophy.png);
-      background-size: contain;
-      background-repeat: no-repeat;
-      width: 60px;
-      height: 60px;
-      cursor: pointer;
-      transition: .6s ease-in-out;
-      &:hover {
-         transform: rotate3d(0, 1, 0, 180deg);
-      }
+      @include settings-button()
 		}
+      		// .control-panel__theme-button
+
+		&__theme-button {
+      background-image: url(../img/png/snowflake.png);
+      @include settings-button();
+      &_winter {
+         background-image: url(../img/png/leaves.png);
+      }
+      }
 }
 .level {
   display: flex;
@@ -393,10 +402,14 @@ body {
   max-width: 800px;
   max-height: 800px;
   position: relative;
+  &_winter {
+   background-image: url(../img/jpg/8102342.jpg);
+  }
   @media (width < 815px) {
    border-image: none;
    padding: 0;
  }
+ 
 		// .field__cell
 
      &__result-table {
@@ -441,12 +454,16 @@ body {
          background-size: cover;
          background-repeat: no-repeat;
          border: 2px solid #47341e;
+         &_winter {
+            background-image: url(../img/jpg/11900.jpg);
+            border: 2px solid #3eb6d9;
+         }
 		}
 
       &_marked {
          background-image: url(../img/png/red-flag.png);
          background-size: cover;
          background-repeat: no-repeat;
-      }
+      }    
 	}
 }
