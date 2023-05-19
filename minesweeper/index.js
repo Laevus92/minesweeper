@@ -1,4 +1,10 @@
-const DIFFICULT = { easy: [100, 10], normal: [225, 25], hard: [625, 99] };
+let DIFFICULT;
+if (localStorage.getItem('difficult')) {
+  DIFFICULT = JSON.parse(localStorage.getItem('difficult'));
+} else {
+  DIFFICULT = { easy: [100, 10], normal: [225, 25], hard: [625, 99] };
+}
+
 let result;
 if (localStorage.getItem('results')) {
   result = JSON.parse(localStorage.getItem('results'));
@@ -50,7 +56,7 @@ function createInterface() {
   stepsIcon.className = 'steps__icon';
   steps.appendChild(stepsIcon);
   const stepsValue = document.createElement('div');
-  stepsValue.className = 'steps__quanuty';
+  stepsValue.className = 'steps__quanity';
   stepsValue.textContent = '000';
   steps.appendChild(stepsValue);
   // create mines quantity
@@ -62,7 +68,7 @@ function createInterface() {
   minesIcon.className = 'mines__icon';
   mines.appendChild(minesIcon);
   const minesValue = document.createElement('div');
-  minesValue.className = 'mines__quanuty';
+  minesValue.className = 'mines__quanity';
   minesValue.textContent = '000';
   mines.appendChild(minesValue);
   // create conttrol panel
@@ -152,7 +158,7 @@ createRecordTable();
 const recordsTable = document.querySelector('.main__records-table');
 const records = document.querySelector('.main__records');
 const recordButton = document.querySelector('.main__record-button');
-const stepsQuantity = document.querySelector('.steps__quanuty');
+const stepsQuantity = document.querySelector('.steps__quanity');
 const timeValue = document.querySelector('.timer__time-value');
 const statisticButton = document.querySelector('.control-panel__record-button');
 let stepCounter = 0;
@@ -167,6 +173,14 @@ const markSound = new Audio('./assets/sounds/hit.mp3');
 const unmarkSound = new Audio('./assets/sounds/unmark.mp3');
 const newGameSound = new Audio('./assets/sounds/new-game.mp3');
 let mute = false;
+let currentGame;
+let isContinue;
+
+if (localStorage.getItem('isContinue')) {
+ isContinue = JSON.parse(localStorage.getItem('isContinue'))
+} else {
+  isContinue = false;
+}
 
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -175,13 +189,14 @@ function getRandomNumber(min, max) {
 let indexesBombs = [];
 let cellsWithoutBomb = [];
 let cellsWithBomb = [];
+let matrix;
 
 function createMatrix(level = DIFFICULT.easy) {
   indexesBombs = [];
   const [cellsQuantity, bombsQuantity] = level;
   const matrixWidth = Math.sqrt(cellsQuantity);
   const matrixHeight = matrixWidth;
-  const matrix = [];
+  matrix = [];
   for (let i = 0; i < matrixHeight; i += 1) {
     const string = [];
     for (let j = 0; j < matrixWidth; j += 1) {
@@ -202,7 +217,7 @@ function createMatrix(level = DIFFICULT.easy) {
     matrix[stringNumber][columnNumber] = 'B';
     indexesBombs.push(stringNumber * matrixWidth + columnNumber);
   }
-
+  currentGame.bombs = indexesBombs;
   matrix.forEach((subArray, axisY) => {
     subArray.forEach((element, axisX) => {
       if (element === 'B') {
@@ -259,7 +274,8 @@ function createMatrix(level = DIFFICULT.easy) {
       cellsWithBomb.push(cells[i]);
     }
   }
-  console.log(matrix);
+  currentGame.matrix = matrix;
+  // console.log(matrix);
   return matrix;
 }
 
@@ -270,6 +286,7 @@ function countStep(cell) {
       stepsQuantity.textContent = stepCounter;
     }
   }
+  currentGame.steps = stepCounter;
 }
 
 function time() {
@@ -281,6 +298,7 @@ function time() {
     const secundes = timeCounter - (minutes * 60);
     timeValue.textContent = (`${minutes < 10 ? `0${minutes}` : minutes}:${secundes < 10 ? `0${secundes}` : secundes}`);
   }
+  currentGame.time = timeCounter;
 }
 
 function startTimer() {
@@ -344,7 +362,7 @@ function saveResult(win) {
       currentResult.result = 'LOOSE';
     }
     currentResult.time = `time: ${document.querySelector('.timer__time-value').textContent}`;
-    currentResult.steps = `steps: ${document.querySelector('.steps__quanuty').textContent}`;
+    currentResult.steps = `steps: ${document.querySelector('.steps__quanity').textContent}`;
     result.push(currentResult);
   } else {
     result.shift();
@@ -354,7 +372,7 @@ function saveResult(win) {
       currentResult.result = 'LOOSE';
     }
     currentResult.time = `time: ${document.querySelector('.timer__time-value').textContent}`;
-    currentResult.steps = `steps: ${document.querySelector('.steps__quanuty').textContent}`;
+    currentResult.steps = `steps: ${document.querySelector('.steps__quanity').textContent}`;
     result.push(currentResult);
   }
   console.log(result);
@@ -374,17 +392,20 @@ function openRecordsTab() {
     list.forEach((element) => element.remove());
   }
 }
-
+let flagsCount;
 function createField(level = DIFFICULT.easy) {
+  isContinue = false;
+  currentGame = {}
   const [cellsQuantity, bombsQuantity] = level;
   const fieldWith = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
   const fieldHeight = Math.sqrt(cellsQuantity) * (40 * (100 / 1280));
+  currentGame.fieldSize = fieldWith;
   let field = document.createElement('div');
   // create game field;
   field.className = 'field';
   field.style.width = `${fieldWith}vw`;
   field.style.height = `${fieldHeight}vw`;
-  document.querySelector('main').appendChild(field);
+  main.appendChild(field);
   field = document.querySelector('.field');
   // create results pop-up
   let resultTable = document.createElement('div');
@@ -404,7 +425,8 @@ function createField(level = DIFFICULT.easy) {
   tableButton.textContent = 'Try again!';
   resultTable.appendChild(tableButton);
   tableButton = document.querySelector('.field__table-button');
-  document.querySelector('.mines__quanuty').textContent = bombsQuantity;
+  document.querySelector('.mines__quanity').textContent = bombsQuantity;
+  flagsCount = bombsQuantity;
   // create field cells
   for (let i = 0; i < cellsQuantity; i += 1) {
     const randomCell = document.createElement('div');
@@ -414,7 +436,7 @@ function createField(level = DIFFICULT.easy) {
     field.appendChild(randomCell);
   }
   const cells = document.querySelectorAll('.field__cell');
-  let matrix = createMatrix(level);
+  matrix = createMatrix(level);
 
   // eslint-disable-next-line no-use-before-define
   isWinID = setInterval(isWin, 500);
@@ -449,7 +471,7 @@ function createField(level = DIFFICULT.easy) {
       stopTimer();
       resultTable.classList.add('field__result-table_active');
       tableTitle.textContent = 'YOU WIN!';
-      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanuty').textContent}`;
+      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
       document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/winner.png)';
       clearInterval(isWinID);
       playSound(winSound, mute);
@@ -459,19 +481,19 @@ function createField(level = DIFFICULT.easy) {
     }
   }
   function markCell(cell) {
-    let flagsCount = Number.parseInt(document.querySelector('.mines__quanuty').textContent, 10);
     if (flagsCount > 0 && !cell.classList.contains('field__cell_marked')
     && !cell.classList.contains('field__cell_opened')) {
       cell.classList.add('field__cell_marked');
       flagsCount -= 1;
-      document.querySelector('.mines__quanuty').textContent = flagsCount;
+      document.querySelector('.mines__quanity').textContent = flagsCount;
       playSound(markSound, mute);
     } else if (cell.classList.contains('field__cell_marked')) {
       cell.classList.remove('field__cell_marked');
       flagsCount += 1;
-      document.querySelector('.mines__quanuty').textContent = flagsCount;
+      document.querySelector('.mines__quanity').textContent = flagsCount;
       playSound(unmarkSound, mute);
     }
+    currentGame.flags = flagsCount;
   }
   function checkCell(cell) {
     const cellStyle = cell;
@@ -531,7 +553,7 @@ function createField(level = DIFFICULT.easy) {
       clearInterval(isWinID);
       resultTable.classList.add('field__result-table_active');
       tableTitle.textContent = 'YOU LOOSE!';
-      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanuty').textContent}`;
+      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
       document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/rip.png)';
       cell.classList.add('field__cell_opened');
       cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
@@ -541,6 +563,7 @@ function createField(level = DIFFICULT.easy) {
       const win = false;
       saveResult(win);
     }
+    isContinue = true
   }
   // init steps counter
   cells.forEach((cell) => {
@@ -553,6 +576,8 @@ function createField(level = DIFFICULT.easy) {
     cell.addEventListener('click', (event) => {
       checkCell(event.target);
       isWin();
+      currentGame.cells = field.innerHTML;
+      currentGame.flags = flagsCount;
     });
 
     // eslint-disable-next-line no-use-before-define
@@ -563,13 +588,218 @@ function createField(level = DIFFICULT.easy) {
     cell.addEventListener('contextmenu', (event) => {
       event.preventDefault();
       markCell(event.target);
+      currentGame.cells = field.innerHTML;
+      currentGame.flags = flagsCount;
     });
   });
+  currentGame.cells = field.innerHTML;
 }
 
-createField();
-
 const levelSelector = document.querySelector('.level__selector');
+
+function loadGame() {
+  if (localStorage.getItem('currentGame')) {
+    currentGame = JSON.parse(localStorage.getItem('currentGame'));
+  } else {
+    currentGame = {};
+  }
+  let field = document.createElement('div');
+  field.className = 'field';
+  field.innerHTML = currentGame.cells;
+  field.style.width = `${currentGame.fieldSize}vw`;
+  field.style.height = `${currentGame.fieldSize}vw`;
+  main.appendChild(field);
+  matrix = currentGame.matrix;
+  const cells = document.querySelectorAll('.field__cell');
+  field = document.querySelector('.field');
+  const resultTable = document.querySelector('.field__result-table');
+  const tableTitle = document.querySelector('.field__table-title');
+  const tableSubtitle = document.querySelector('.field__table-subtitle');
+  const tableButton = document.querySelector('.field__table-button');
+  indexesBombs = currentGame.bombs;
+  cellsWithBomb = [];
+  cellsWithoutBomb = [];
+  if (localStorage.getItem('level')) {
+    levelSelector.value = localStorage.getItem('level');
+  }
+  const [cellsQuantity, bombsQuantity] = DIFFICULT[levelSelector.value];
+  for (let i = 0; i < cellsQuantity; i += 1) {
+    if (!indexesBombs.includes(Array.from(cells).indexOf(cells[i]))) {
+      cellsWithoutBomb.push(cells[i]);
+    } else {
+      cellsWithBomb.push(cells[i]);
+    }
+  }
+
+  function showBombs() {
+    cells.forEach((cell) => {
+      const cellStyle = cell;
+      const allStringNumber = Math.floor(Array.from(cells).indexOf(cell)
+      / Math.sqrt(cellsQuantity));
+      const allColumnNumber = Array.from(cells).indexOf(cell)
+      - (Math.sqrt(cellsQuantity) * allStringNumber);
+
+      if (matrix[allStringNumber][allColumnNumber] === 'B') {
+        cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
+        cellStyle.style.backgroundColor = '#47341e';
+      }
+
+      cell.classList.add('field__cell_opened');
+      cell.classList.remove('field__cell_marked');
+      cell.removeEventListener('click', countStep);
+
+      if (matrix[allStringNumber][allColumnNumber] !== 'B' && matrix[allStringNumber][allColumnNumber] !== 0) {
+        cellStyle.textContent = matrix[allStringNumber][allColumnNumber];
+        switchNumberColor(cell);
+      }
+    });
+  }
+
+  function isWin() {
+    if (cellsWithoutBomb.every((element) => element.classList.contains('field__cell_opened'))
+    && cellsWithBomb.every((element) => !element.classList.contains('field__cell_opened'))) {
+      stopTimer();
+      resultTable.classList.add('field__result-table_active');
+      tableTitle.textContent = 'YOU WIN!';
+      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
+      document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/winner.png)';
+      clearInterval(isWinID);
+      playSound(winSound, mute);
+      showBombs();
+      const win = true;
+      saveResult(win);
+    }
+  }
+
+  isWinID = setInterval(isWin, 500);
+  timeCounter = currentGame.time;
+  startTimer();
+
+  stepCounter = currentGame.steps;
+  stepsQuantity.textContent = stepCounter;
+
+  document.querySelector('.mines__quanity').textContent = currentGame.flags;
+
+  function markCell(cell) {
+    flagsCount = Number.parseInt(document.querySelector('.mines__quanity').textContent, 10);
+    if (flagsCount > 0 && !cell.classList.contains('field__cell_marked')
+    && !cell.classList.contains('field__cell_opened')) {
+      cell.classList.add('field__cell_marked');
+      flagsCount -= 1;
+      document.querySelector('.mines__quanity').textContent = flagsCount;
+      playSound(markSound, mute);
+    } else if (cell.classList.contains('field__cell_marked')) {
+      cell.classList.remove('field__cell_marked');
+      flagsCount += 1;
+      document.querySelector('.mines__quanity').textContent = flagsCount;
+      playSound(unmarkSound, mute);
+    }
+  }
+
+  function checkCell(cell) {
+    const cellStyle = cell;
+    const stringNumber = Math.floor(Array.from(cells).indexOf(cell) / Math.sqrt(cellsQuantity));
+    const columnNumber = Array.from(cells).indexOf(cell)
+    - (Math.sqrt(cellsQuantity) * stringNumber);
+    // if (Array.from(cells).every((element) => !element.classList.contains('field__cell_opened'))
+    // && !cell.classList.contains('field__cell_marked')) {
+    //   while (matrix[stringNumber][columnNumber] === 'B') {
+    //     matrix = createMatrix(level);
+    //   }
+    // }
+    if (matrix[stringNumber][columnNumber] !== 0 && matrix[stringNumber][columnNumber]
+      !== 'B' && matrix[stringNumber][columnNumber] !== undefined && !cell.classList.contains('field__cell_marked')) {
+      cell.classList.add('field__cell_opened');
+      cellStyle.textContent = matrix[stringNumber][columnNumber];
+      switchNumberColor(cell);
+      playSound(clickSound, mute);
+    } else if (matrix[stringNumber][columnNumber] === 0 && !cell.classList.contains('field__cell_opened')
+    && !cell.classList.contains('field__cell_marked')) {
+      cell.classList.add('field__cell_opened');
+      // предыдущая ячейка
+      if (columnNumber > 0) {
+        checkCell(cells[Array.from(cells).indexOf(cell) - 1]);
+      }
+      // следующая ячейка
+      if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
+        checkCell(cells[Array.from(cells).indexOf(cell) + 1]);
+      }
+      // ячейка ниже
+      if (stringNumber > 0) {
+        checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity)]);
+        // предыдущая ячейка
+        if (columnNumber > 0) {
+          checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity) - 1]);
+        }
+        // следующая ячейка
+        if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
+          checkCell(cells[Array.from(cells).indexOf(cell) - Math.sqrt(cellsQuantity) + 1]);
+        }
+      }
+      // ячейка выше
+      if (stringNumber < Math.sqrt(cellsQuantity) - 1) {
+        checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity)]);
+        // предыдущая ячейка
+        if (columnNumber > 0) {
+          checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity) - 1]);
+        }
+        // следующая ячейка
+        if (columnNumber < Math.sqrt(cellsQuantity) - 1) {
+          checkCell(cells[Array.from(cells).indexOf(cell) + Math.sqrt(cellsQuantity) + 1]);
+        }
+      }
+    } else if (matrix[stringNumber][columnNumber] === 'B' && !cell.classList.contains('field__cell_marked')) {
+      stopTimer();
+      clearInterval(isWinID);
+      resultTable.classList.add('field__result-table_active');
+      tableTitle.textContent = 'YOU LOOSE!';
+      tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
+      document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/rip.png)';
+      cell.classList.add('field__cell_opened');
+      cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
+      cellStyle.style.backgroundColor = '#47341e';
+      showBombs();
+      playSound(looseSound, mute);
+      const win = false;
+      saveResult(win);
+    }
+    isContinue = true;
+  }
+
+  cells.forEach((cell) => {
+    cell.addEventListener('click', (event) => {
+      countStep(event.target);
+    });
+  });
+  // check cell
+  cells.forEach((cell) => {
+    cell.addEventListener('click', (event) => {
+      checkCell(event.target);
+      isWin();
+      currentGame.cells = field.innerHTML;
+      currentGame.flags = flagsCount;
+    });
+
+    // eslint-disable-next-line no-use-before-define
+    tableButton.addEventListener('click', startNewGame);
+  });
+
+  cells.forEach((cell) => {
+    cell.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      markCell(event.target);
+      currentGame.cells = field.innerHTML;
+      currentGame.flags = flagsCount;
+    });
+  });
+  currentGame.cells = field.innerHTML;
+}
+
+if (isContinue === true) {
+  loadGame();
+} else {
+  createField();
+}
 
 function startNewCustomGame() {
   const inputWidth = document.querySelector('.level__input-width');
@@ -651,6 +881,10 @@ recordButton.addEventListener('click', openRecordsTab);
 
 function setLocalStorage() {
   localStorage.setItem('results', JSON.stringify(result));
+  localStorage.setItem('currentGame', JSON.stringify(currentGame));
+  localStorage.setItem('difficult', JSON.stringify(DIFFICULT));
+  localStorage.setItem('level', levelSelector.value);
+  localStorage.setItem('isContinue', JSON.stringify(isContinue));
 }
 
-window.addEventListener('beforeunload', setLocalStorage)
+window.addEventListener('beforeunload', setLocalStorage);
