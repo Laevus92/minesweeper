@@ -12,11 +12,22 @@ if (localStorage.getItem('results')) {
   result = [];
 }
 
+let theme;
+if (localStorage.getItem('theme')) {
+  theme = localStorage.getItem('theme');
+} else {
+  theme = 'summer';
+}
+
 function createInterface() {
+  const body = document.querySelector('.body');
+  if (theme === 'winter') {
+    body.classList.add('body_winter');
+  }
   // create wrapper
   let wrapper = document.createElement('div');
   wrapper.className = 'wrapper';
-  document.querySelector('body').appendChild(wrapper);
+  body.appendChild(wrapper);
   wrapper = document.querySelector('.wrapper');
   let main = document.createElement('main');
   main.classList = 'main';
@@ -29,6 +40,9 @@ function createInterface() {
   // create game info
   let playersStatistic = document.createElement('div');
   playersStatistic.className = 'players-statistic';
+  if (theme === 'winter') {
+    playersStatistic.classList.add('players-statistic_winter');
+  }
   aside.appendChild(playersStatistic);
   playersStatistic = document.querySelector('.players-statistic');
   // create avatar
@@ -74,6 +88,9 @@ function createInterface() {
   // create conttrol panel
   let controlPanel = document.createElement('div');
   controlPanel.className = 'control-panel';
+  if (theme === 'winter') {
+    controlPanel.classList.add('control-panel_winter');
+  }
   aside.appendChild(controlPanel);
   controlPanel = document.querySelector('.control-panel');
   let buttons = document.createElement('div');
@@ -89,6 +106,12 @@ function createInterface() {
   const recordsButton = document.createElement('div');
   recordsButton.classList = 'control-panel__record-button';
   buttons.appendChild(recordsButton);
+  const themeButton = document.createElement('div');
+  themeButton.classList = 'control-panel__theme-button';
+  if (theme === 'winter') {
+    themeButton.classList.add('control-panel__theme-button_winter');
+  }
+  buttons.appendChild(themeButton);
   let level = document.createElement('div');
   level.className = 'control-panel__level level';
   controlPanel.appendChild(level);
@@ -403,6 +426,9 @@ function createField(level = DIFFICULT.easy) {
   field.className = 'field';
   field.style.width = `${fieldWith}vw`;
   field.style.height = `${fieldHeight}vw`;
+  if (theme === 'winter') {
+    field.classList.add('field_winter');
+  }
   main.appendChild(field);
   field = document.querySelector('.field');
   // create results pop-up
@@ -451,7 +477,9 @@ function createField(level = DIFFICULT.easy) {
         cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
         cellStyle.style.backgroundColor = '#47341e';
       }
-
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cell.classList.remove('field__cell_marked');
       cell.removeEventListener('click', countStep);
@@ -509,12 +537,18 @@ function createField(level = DIFFICULT.easy) {
     }
     if (matrix[stringNumber][columnNumber] !== 0 && matrix[stringNumber][columnNumber]
       !== 'B' && matrix[stringNumber][columnNumber] !== undefined && !cell.classList.contains('field__cell_marked')) {
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cellStyle.textContent = matrix[stringNumber][columnNumber];
       switchNumberColor(cell);
       playSound(clickSound, mute);
     } else if (matrix[stringNumber][columnNumber] === 0 && !cell.classList.contains('field__cell_opened')
     && !cell.classList.contains('field__cell_marked')) {
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       // предыдущая ячейка
       if (columnNumber > 0) {
@@ -555,9 +589,16 @@ function createField(level = DIFFICULT.easy) {
       tableTitle.textContent = 'YOU LOOSE!';
       tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
       document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/rip.png)';
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
-      cellStyle.style.backgroundColor = '#47341e';
+      if (theme === 'winter') {
+        cellStyle.style.backgroundColor = '#7286c7';
+      } else {
+        cellStyle.style.backgroundColor = '#47341e';
+      }
       showBombs();
       playSound(looseSound, mute);
       const win = false;
@@ -605,12 +646,28 @@ function loadGame() {
   }
   let field = document.createElement('div');
   field.className = 'field';
+  if (theme === 'winter') {
+    field.classList.add('field_winter');
+  }
   field.innerHTML = currentGame.cells;
   field.style.width = `${currentGame.fieldSize}vw`;
   field.style.height = `${currentGame.fieldSize}vw`;
   main.appendChild(field);
   matrix = currentGame.matrix;
   const cells = document.querySelectorAll('.field__cell');
+  if (theme === 'winter') {
+    cells.forEach((cell) => {
+      if (cell.classList.contains('field__cell_opened')) {
+        cell.classList.add('field__cell_opened_winter');
+      }
+    });
+  } else {
+    cells.forEach((cell) => {
+      if (cell.classList.contains('field__cell_opened')) {
+        cell.classList.remove('field__cell_opened_winter');
+      }
+    });
+  }
   field = document.querySelector('.field');
   const resultTable = document.querySelector('.field__result-table');
   const tableTitle = document.querySelector('.field__table-title');
@@ -643,7 +700,11 @@ function loadGame() {
         cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
         cellStyle.style.backgroundColor = '#47341e';
       }
-
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      } else {
+        cell.classList.remove('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cell.classList.remove('field__cell_marked');
       cell.removeEventListener('click', countStep);
@@ -703,12 +764,18 @@ function loadGame() {
     - (Math.sqrt(cellsQuantity) * stringNumber);
     if (matrix[stringNumber][columnNumber] !== 0 && matrix[stringNumber][columnNumber]
       !== 'B' && matrix[stringNumber][columnNumber] !== undefined && !cell.classList.contains('field__cell_marked')) {
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cellStyle.textContent = matrix[stringNumber][columnNumber];
       switchNumberColor(cell);
       playSound(clickSound, mute);
     } else if (matrix[stringNumber][columnNumber] === 0 && !cell.classList.contains('field__cell_opened')
     && !cell.classList.contains('field__cell_marked')) {
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       // предыдущая ячейка
       if (columnNumber > 0) {
@@ -749,9 +816,16 @@ function loadGame() {
       tableTitle.textContent = 'YOU LOOSE!';
       tableSubtitle.textContent = `time: ${document.querySelector('.timer__time-value').textContent} steps: ${document.querySelector('.steps__quanity').textContent}`;
       document.querySelector('.players-statistic__avatar').style.backgroundImage = 'url(./assets/img/png/rip.png)';
+      if (theme === 'winter') {
+        cell.classList.add('field__cell_opened_winter');
+      }
       cell.classList.add('field__cell_opened');
       cellStyle.style.backgroundImage = 'url(./assets/img/png/bomb.png)';
-      cellStyle.style.backgroundColor = '#47341e';
+      if (theme === 'winter') {
+        cellStyle.style.backgroundColor = '#7286c7';
+      } else {
+        cellStyle.style.backgroundColor = '#47341e';
+      }
       showBombs();
       playSound(looseSound, mute);
       const win = false;
@@ -879,6 +953,41 @@ function setLocalStorage() {
   localStorage.setItem('difficult', JSON.stringify(DIFFICULT));
   localStorage.setItem('level', levelSelector.value);
   localStorage.setItem('isContinue', JSON.stringify(isContinue));
+  localStorage.setItem('theme', theme);
 }
+
+const themeButton = document.querySelector('.control-panel__theme-button');
+themeButton.addEventListener('click', () => {
+  const body = document.querySelector('.body');
+  const field = document.querySelector('.field');
+  const playersStatistic = document.querySelector('.players-statistic');
+  const controlPanel = document.querySelector('.control-panel');
+  const cells = document.querySelectorAll('.field__cell');
+  if (theme === 'summer') {
+    theme = 'winter';
+    themeButton.classList.add('control-panel__theme-button_winter');
+    body.classList.add('body_winter');
+    field.classList.add('field_winter');
+    playersStatistic.classList.add('players-statistic_winter');
+    controlPanel.classList.add('control-panel_winter');
+    cells.forEach((cell) => {
+      if (cell.classList.contains('field__cell_opened')) {
+        cell.classList.add('field__cell_opened_winter');
+      }
+    });
+  } else {
+    theme = 'summer';
+    themeButton.classList.remove('control-panel__theme-button_winter');
+    body.classList.remove('body_winter');
+    field.classList.remove('field_winter');
+    playersStatistic.classList.remove('players-statistic_winter');
+    controlPanel.classList.remove('control-panel_winter');
+    cells.forEach((cell) => {
+      if (cell.classList.contains('field__cell_opened')) {
+        cell.classList.remove('field__cell_opened_winter');
+      }
+    });
+  }
+});
 
 window.addEventListener('beforeunload', setLocalStorage);
