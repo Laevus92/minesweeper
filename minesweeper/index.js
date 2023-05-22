@@ -275,7 +275,6 @@ function createMatrix(level = DIFFICULT.easy) {
     }
   }
   currentGame.matrix = matrix;
-  // console.log(matrix);
   return matrix;
 }
 
@@ -375,7 +374,6 @@ function saveResult(win) {
     currentResult.steps = `steps: ${document.querySelector('.steps__quanity').textContent}`;
     result.push(currentResult);
   }
-  console.log(result);
 }
 function openRecordsTab() {
   if (!records.classList.contains('main__records_active')) {
@@ -481,7 +479,9 @@ function createField(level = DIFFICULT.easy) {
     }
   }
   function markCell(cell) {
-    if (flagsCount > 0 && !cell.classList.contains('field__cell_marked')
+    if (Array.from(cells).every((element) => !element.classList.contains('field__cell_opened'))) {
+      alert('Open any cell firstly');
+    } else if (flagsCount > 0 && !cell.classList.contains('field__cell_marked')
     && !cell.classList.contains('field__cell_opened')) {
       cell.classList.add('field__cell_marked');
       flagsCount -= 1;
@@ -622,7 +622,7 @@ function loadGame() {
   if (localStorage.getItem('level')) {
     levelSelector.value = localStorage.getItem('level');
   }
-  const [cellsQuantity, bombsQuantity] = DIFFICULT[levelSelector.value];
+  const [cellsQuantity] = DIFFICULT[levelSelector.value];
   for (let i = 0; i < cellsQuantity; i += 1) {
     if (!indexesBombs.includes(Array.from(cells).indexOf(cells[i]))) {
       cellsWithoutBomb.push(cells[i]);
@@ -701,12 +701,6 @@ function loadGame() {
     const stringNumber = Math.floor(Array.from(cells).indexOf(cell) / Math.sqrt(cellsQuantity));
     const columnNumber = Array.from(cells).indexOf(cell)
     - (Math.sqrt(cellsQuantity) * stringNumber);
-    // if (Array.from(cells).every((element) => !element.classList.contains('field__cell_opened'))
-    // && !cell.classList.contains('field__cell_marked')) {
-    //   while (matrix[stringNumber][columnNumber] === 'B') {
-    //     matrix = createMatrix(level);
-    //   }
-    // }
     if (matrix[stringNumber][columnNumber] !== 0 && matrix[stringNumber][columnNumber]
       !== 'B' && matrix[stringNumber][columnNumber] !== undefined && !cell.classList.contains('field__cell_marked')) {
       cell.classList.add('field__cell_opened');
