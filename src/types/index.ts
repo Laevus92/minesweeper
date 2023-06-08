@@ -10,3 +10,11 @@ export interface NewsItem {
   url: string;
 }
 
+export interface NewsSource {
+  name:string;
+  id: string
+}
+
+export interface SourcesInterface {
+  draw(data: NewsSource[]): void;
+}
