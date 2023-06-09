@@ -18,3 +18,17 @@ export interface NewsSource {
 export interface SourcesInterface {
   draw(data: NewsSource[]): void;
 }
+
+export interface Response {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  json(): Promise<any>;
+}
+
+
+export interface Options {
+  [key: string]: string;
+}
+
+export type Callback = (data: any) => void;
